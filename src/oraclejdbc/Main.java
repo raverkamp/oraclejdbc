@@ -17,7 +17,10 @@ public class Main {
         DriverManager.registerDriver(new OracleDriver());
         OracleConnection oc = (OracleConnection) DriverManager.getConnection("jdbc:oracle:thin:@localhost:11521:xe", "bdms", "bdms");
         w.mark("con");
+        ComplexArrayDeluxe.run(oc);
+        oc = (OracleConnection) DriverManager.getConnection("jdbc:oracle:thin:@localhost:11521:xe", "bdms", "bdms");
         SuperComplexArray.run(oc);
+       
         w.mark("fertig");
         w.mark("con");
         // it seems the types are cached in the connection, if the connection is not refreshed
@@ -30,6 +33,7 @@ public class Main {
         w.mark("total");
         ArrayX.run(oc);
         w.mark("total2");
+        oc.close();
 
     }
 
