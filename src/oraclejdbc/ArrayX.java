@@ -58,7 +58,7 @@ public class ArrayX {
                 "?:= vo;",
                 "?:= do;",
                 "end;");
-        
+
         w.mark("es geht los");
         OracleCallableStatement ocs = (OracleCallableStatement) oc.prepareCall(sql);
 
@@ -75,7 +75,6 @@ public class ArrayX {
         }
         oracle.sql.ARRAY va = (oracle.sql.ARRAY) oc.createARRAY("V_ARRAY", bargs);
         ocs.setARRAY(2, va);
-
 
         Timestamp[] dargs = new Timestamp[235];
         for (int i = 0; i < dargs.length; i++) {
