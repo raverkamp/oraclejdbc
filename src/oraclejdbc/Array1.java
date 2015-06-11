@@ -46,13 +46,7 @@ public class Array1 {
     }
 
     public static void mkTypes(OracleConnection oc) throws SQLException {
-        OracleStatement s = (OracleStatement) oc.createStatement();
-        try {
-            s.execute("drop type ZVARRAY");
-        } catch (SQLException x) {
-            logger.info(x.getMessage());
-        }
-        s.execute("create type ZVARRAY as table of varchar2(32000)");
+        Ddl.createType(oc, "create type ZVARRAY as table of varchar2(32000)");
 
     }
 

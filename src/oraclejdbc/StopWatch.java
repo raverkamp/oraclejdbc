@@ -12,7 +12,7 @@ public class StopWatch {
 
     public void mark(String s) {
         long a = System.currentTimeMillis();
-        System.out.println(s + ": " + (a - start) + " " + (a - last));
+        System.out.println("############# " + s + ": " + (a - start) + " " + (a - last));
         last = a;
     }
 

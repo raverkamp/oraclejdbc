@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleStatement;
+import oracle.jdbc.OracleTypes;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 import oracle.sql.Datum;
@@ -69,7 +70,7 @@ public class SuperComplexArray {
         CallableStatement cs = oc.prepareCall(te);
         w.mark("prepared");
         //  cs.setArray(1, a);
-        cs.registerOutParameter(1, Types.ARRAY, "X_ARRAY");
+        cs.registerOutParameter(1, OracleTypes.ARRAY, "X_ARRAY");
         w.mark("reg done");
         cs.execute();
         w.mark("exec");
@@ -89,19 +90,10 @@ public class SuperComplexArray {
     }
 
     static void mkTypes(OracleConnection oc) throws SQLException {
-        OracleStatement s = (OracleStatement) oc.createStatement();
-        for (String ty : new String[]{"x_array", "x_record", "a_array", "a_record"}) {
-            try {
-                s.execute("drop type " + ty);
-            } catch (SQLException x) {
-                x.printStackTrace(System.err);
-                logger.info(x.getMessage());
-            }
-        }
-        s.execute("create type a_record as object(a number,b varchar2(32000),c date)");
-        s.execute("create type A_ARRAY as table of a_record");
-        s.execute("create type x_record as object(x a_array,y a_record,z number)");
-        s.execute("create type x_ARRAY as table of x_record");
+        Ddl.createType(oc, "create type a_record as object(a number,b varchar2(32000),c date)");
+        Ddl.createType(oc, "create type A_ARRAY as table of a_record");
+        Ddl.createType(oc, "create type x_record as object(x a_array,y a_record,z number)");
+        Ddl.createType(oc, "create type x_ARRAY as table of x_record");
     }
 
     static class ARecord {

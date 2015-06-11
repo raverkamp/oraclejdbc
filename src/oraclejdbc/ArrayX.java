@@ -105,18 +105,9 @@ public class ArrayX {
     }
 
     public static void mkTypes(OracleConnection oc) throws SQLException {
-        OracleStatement s = (OracleStatement) oc.createStatement();
-        try {
-            s.execute("drop type N_ARRAY");
-            s.execute("drop type V_ARRAY");
-            s.execute("drop type D_ARRAY");
-
-        } catch (SQLException x) {
-            logger.info(x.getMessage());
-        }
-        s.execute("create type N_ARRAY as table of number");
-        s.execute("create type V_ARRAY as table of varchar2(32000)");
-        s.execute("create type D_ARRAY as table of date");
+        Ddl.createType(oc, "create type N_ARRAY as table of number");
+        Ddl.createType(oc, "create type V_ARRAY as table of varchar2(32000)");
+        Ddl.createType(oc, "create type D_ARRAY as table of date");
 
     }
 

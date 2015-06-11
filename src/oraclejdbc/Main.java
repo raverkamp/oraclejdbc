@@ -15,17 +15,21 @@ public class Main {
         StopWatch w = new StopWatch();
         w.mark("start");
         DriverManager.registerDriver(new OracleDriver());
-        Connection c = DriverManager.getConnection("jdbc:oracle:thin:@localhost:11521:xe", "bdms", "bdms");
-        OracleConnection oc = (OracleConnection) c;
+        OracleConnection oc = (OracleConnection) DriverManager.getConnection("jdbc:oracle:thin:@localhost:11521:xe", "bdms", "bdms");
         w.mark("con");
         SuperComplexArray.run(oc);
         w.mark("fertig");
-        /*w.mark("con");
-         Array1.run(oc);
-         w.mark("total");
-         ArrayX.run(oc);
-         w.mark("total2");
-         */
+        w.mark("con");
+        // it seems the types are cached in the connection, if the connection is not refreshed
+        // there is a type error in the  ComplexArray.run 
+        oc = (OracleConnection) DriverManager.getConnection("jdbc:oracle:thin:@localhost:11521:xe", "bdms", "bdms");
+        ComplexArray.run(oc);
+        w.mark("fertig");
+        w.mark("con");
+        Array1.run(oc);
+        w.mark("total");
+        ArrayX.run(oc);
+        w.mark("total2");
 
     }
 
