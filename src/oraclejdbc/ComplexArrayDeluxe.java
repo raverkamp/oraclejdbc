@@ -5,6 +5,7 @@ import java.sql.CallableStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,17 +73,14 @@ public class ComplexArrayDeluxe {
                 " end loop;",
                 " ? := aa;",
                 "end;");
-        ARRAY xa;
+        ArrayList<Map<String, Object>> a;//arrayToMapsARRAY xa;
         try (CallableStatement cs = oc.prepareCall(sql)) {
             cs.registerOutParameter(1, OracleTypes.ARRAY, "A_ARRAY");
             cs.execute();
-            xa = (ARRAY) cs.getArray(1);
+            a =  arrayToMaps( (ARRAY) cs.getArray(1));
         }
-        Datum[] das = xa.getOracleArray();
-        for (Datum da : das) {
-            // System.out.println(da);
-            STRUCT s = (STRUCT) da;
-            Map<String,Object> m = structToMap(s);
+
+        for (Map<String, Object> m: a) {
             A_record ar = new A_record();
             ar.a = (BigDecimal) m.get("A");
             ar.b = (String) m.get("B");
@@ -109,6 +107,15 @@ public class ComplexArrayDeluxe {
         }
         for (int i = 0; i < o.length; i++) {
             res.put(md.getColumnName(i + 1), o[i]);
+        }
+        return res;
+    }
+    
+    public static ArrayList<Map<String, Object>> arrayToMaps(ARRAY a) throws SQLException {
+        ArrayList<Map<String, Object>> res = new ArrayList<>();
+        Datum[] das = a.getOracleArray();
+        for(int i=0;i<das.length;i++) {
+             res.add(structToMap((STRUCT) das[i]));
         }
         return res;
     }
