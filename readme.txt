@@ -13,7 +13,7 @@ Warum das ganze:
 
 Komplexe Datentypen als Stored Procedure Parameter.
 Es gibt keine möglichkeit diese direkt runter zu schicken,
-Aaber man könnte sie in die Arrays zerlegen und dann runterschicken.
+Aber man könnte sie in die Arrays zerlegen und dann runterschicken.
 
 Ich habe mir JPublisher angeschaut, JPublisher generiert Zugriff
 Klassen auch für PL/SQL Packages.

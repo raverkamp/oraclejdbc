@@ -1,22 +1,10 @@
 package oraclejdbc;
 
-import java.sql.CallableStatement;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.logging.Logger;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleStatement;
-import oracle.jdbc.OracleTypes;
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
-import oracle.sql.Datum;
-import oracle.sql.STRUCT;
-import oracle.sql.StructDescriptor;
+import java.sql.*;
+import oracle.jdbc.*;
+import oracle.sql.*;
 
 public class ComplexArray {
-
-    static final Logger logger = Logger.getGlobal();
 
     static String ml(String... a) {
         StringBuilder b = new StringBuilder();
@@ -51,12 +39,13 @@ public class ComplexArray {
                 " end loop;",
                 " ? := xa;",
                 "end;");
-        CallableStatement cs = oc.prepareCall(sql);
-        cs.setArray(1, a);
-        cs.registerOutParameter(2, OracleTypes.ARRAY, "X_ARRAY");
-        cs.execute();
-        ARRAY xa = (ARRAY) cs.getArray(2);
-        cs.close();
+        final ARRAY xa;
+        try (CallableStatement cs = oc.prepareCall(sql)) {
+            cs.setArray(1, a);
+            cs.registerOutParameter(2, OracleTypes.ARRAY, "X_ARRAY");
+            cs.execute();
+            xa = (ARRAY) cs.getArray(2);
+        }
         Datum[] das = xa.getOracleArray();
         for (Datum da : das) {
             System.out.println(da);

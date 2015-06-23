@@ -1,12 +1,10 @@
 package oraclejdbc;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleStatement;
-import static oraclejdbc.ArrayX.logger;
 
 public class Ddl {
 
@@ -24,9 +22,8 @@ public class Ddl {
 
         try {
             stm.execute("drop type " + name + " force");
-
         } catch (SQLException x) {
-            logger.info(x.getMessage());
+            System.err.printf(x.getMessage());
         }
 
         try {
@@ -34,6 +31,11 @@ public class Ddl {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-
+    }
+    
+    public static void call(OracleConnection con,String ... s) throws SQLException {
+        try (Statement stm = con.createStatement()) {
+            stm.execute(String.join("\n",s));
+        }
     }
 }

@@ -77,10 +77,10 @@ public class ComplexArrayDeluxe {
         try (CallableStatement cs = oc.prepareCall(sql)) {
             cs.registerOutParameter(1, OracleTypes.ARRAY, "A_ARRAY");
             cs.execute();
-            a =  arrayToMaps( (ARRAY) cs.getArray(1));
+            a = arrayToMaps((ARRAY) cs.getArray(1));
         }
 
-        for (Map<String, Object> m: a) {
+        for (Map<String, Object> m : a) {
             A_record ar = new A_record();
             ar.a = (BigDecimal) m.get("A");
             ar.b = (String) m.get("B");
@@ -99,8 +99,11 @@ public class ComplexArrayDeluxe {
         HashMap<String, Object> res = new HashMap<>();
         Object[] o = s.getAttributes();
         StructDescriptor d = s.getDescriptor();
+        d.initMetadataRecursively();
         AttributeDescriptor[] ad = d.getAttributesDescriptor();
-        // ad is always null!
+        // ad is always null! even with d.initMetadataRecursively();
+        // in oracle 12 jdbc this methood is deprecated
+        // it seems the whole class StructDescriptor is deprecated
         ResultSetMetaData md = d.getMetaData();
         if (md.getColumnCount() != o.length) {
             throw new RuntimeException("length of meta data and values do not match");
@@ -110,12 +113,12 @@ public class ComplexArrayDeluxe {
         }
         return res;
     }
-    
+
     public static ArrayList<Map<String, Object>> arrayToMaps(ARRAY a) throws SQLException {
         ArrayList<Map<String, Object>> res = new ArrayList<>();
         Datum[] das = a.getOracleArray();
-        for(int i=0;i<das.length;i++) {
-             res.add(structToMap((STRUCT) das[i]));
+        for (int i = 0; i < das.length; i++) {
+            res.add(structToMap((STRUCT) das[i]));
         }
         return res;
     }

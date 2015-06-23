@@ -1,22 +1,11 @@
 package oraclejdbc;
 
 import java.math.BigDecimal;
-import java.sql.Array;
-import java.sql.CallableStatement;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleStatement;
-import oracle.jdbc.OracleTypes;
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
-import oracle.sql.Datum;
-import oracle.sql.STRUCT;
-import oracle.sql.StructDescriptor;
+import oracle.jdbc.*;
+import oracle.sql.*;
 
 public class SuperComplexArray {
 
@@ -65,15 +54,13 @@ public class SuperComplexArray {
                 " dbms_output.put_line(xa(1).x.last); ",
                 "end;");
         System.out.println(te);
-        StopWatch w = new StopWatch();
-        w.mark("start");
+
         CallableStatement cs = oc.prepareCall(te);
-        w.mark("prepared");
-        //  cs.setArray(1, a);
+
         cs.registerOutParameter(1, OracleTypes.ARRAY, "X_ARRAY");
-        w.mark("reg done");
+
         cs.execute();
-        w.mark("exec");
+
         ARRAY xa = (ARRAY) cs.getArray(1);
         cs.close();
         Datum[] das = xa.getOracleArray();
@@ -86,7 +73,7 @@ public class SuperComplexArray {
              System.out.print("  "+  o);
              }*/
         }
-        w.mark("finish");
+
     }
 
     static void mkTypes(OracleConnection oc) throws SQLException {
@@ -117,8 +104,6 @@ public class SuperComplexArray {
         }
 
         public Datum toDatum(OracleConnection oc, StructDescriptor sd) throws Exception {
-
-            // Object[
             Object[] os = new Object[]{a, b, c};
             return new STRUCT(sd, oc, os);
         }

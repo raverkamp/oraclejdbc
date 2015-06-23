@@ -1,22 +1,20 @@
 package oraclejdbc;
 
 import java.sql.SQLException;
-import java.util.logging.Logger;
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleStatement;
-import oracle.jdbc.OracleTypes;
-import oracle.sql.ARRAY;
+import oracle.jdbc.*;
+import oracle.sql.*;
 
 public class Array1 {
 
-    static final Logger logger = Logger.getGlobal();
-
+    /* send an array of string into the database, the database rverts the order
+       of the array and returns it in an out parameter
+    */
     public static void run(OracleConnection oc) throws SQLException {
-        StopWatch w = new StopWatch();
-        mkTypes(oc);
-        w.mark("ty da");
-        String s = "declare a zvarray; b zvarray; \n"
+        
+
+        Ddl.createType(oc, "create type ZVARRAY as table of varchar2(32000)");
+
+        String sql = "declare a zvarray; b zvarray; \n"
                 + " begin \n"
                 + " b:=  zvarray();\n "
                 + "  a:=?; \n"
@@ -26,28 +24,31 @@ public class Array1 {
                 + " end loop;\n"
                 + " ?:= b;\n"
                 + "end;\n";
-        System.out.println(s);
+        
+        String prefix = "kjdsfjhldshflksjdhflksjhflsjahfdlkjakjshdlkjshflksf ";
         String[] arg = new String[100000];
         for (int i = 0; i < arg.length; i++) {
-            arg[i] = "kjdsfjhldshflksjdhflksjhflsjahfdlkjakjshdlkjshflksf " + i;
+            arg[i] = prefix + i;
         }
-        w.mark("before prepare");
-        OracleCallableStatement ocs = (OracleCallableStatement) oc.prepareCall(s);
+
+        OracleCallableStatement ocs = (OracleCallableStatement) oc.prepareCall(sql);
         oracle.sql.ARRAY a = (oracle.sql.ARRAY) oc.createARRAY("ZVARRAY", arg);
-        w.mark("before set");
+
         ocs.setARRAY(1, a);
         ocs.registerOutParameter(2, OracleTypes.ARRAY, "ZVARRAY");
-        w.mark("before call");
+
         ocs.execute();
-        w.mark("after call");
+
         ARRAY b = ocs.getARRAY(2);
-        Object o = b.getArray();
-        w.mark("fertig");
-    }
+        Object[] oa = (Object[]) b.getArray();
+        
+        for (int i = 0; i < oa.length; i++) {
+            if (!oa[i].equals(arg[oa.length-i-1])){
+                throw new RuntimeException("fail");
+            }
+        }
 
-    public static void mkTypes(OracleConnection oc) throws SQLException {
-        Ddl.createType(oc, "create type ZVARRAY as table of varchar2(32000)");
-
+     
     }
 
 }

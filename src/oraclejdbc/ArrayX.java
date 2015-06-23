@@ -1,32 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package oraclejdbc;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.logging.Logger;
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleStatement;
-import oracle.jdbc.OracleTypes;
-import oracle.sql.ARRAY;
+import java.sql.*;
+import oracle.jdbc.*;
+import oracle.sql.*;
 
-/**
- *
- * @author rav
- */
 public class ArrayX {
-
-    static final Logger logger = Logger.getGlobal();
+    /* create three array types, for number, string and date in oracle
+       send three arrays to oracle revert then and return them in
+       out parameters
+    */
 
     public static void run(OracleConnection oc) throws SQLException {
-        StopWatch w = new StopWatch();
-        mkTypes(oc);
+
+        Ddl.createType(oc, "create type N_ARRAY as table of number");
+        Ddl.createType(oc, "create type V_ARRAY as table of varchar2(32000)");
+        Ddl.createType(oc, "create type D_ARRAY as table of date");
+        
         String sql = ml(
                 "declare",
                 " na N_ARRAY;",
@@ -59,7 +49,6 @@ public class ArrayX {
                 "?:= do;",
                 "end;");
 
-        w.mark("es geht los");
         OracleCallableStatement ocs = (OracleCallableStatement) oc.prepareCall(sql);
 
         BigDecimal[] bargs = new BigDecimal[100];
@@ -73,7 +62,7 @@ public class ArrayX {
         for (int i = 0; i < vargs.length; i++) {
             vargs[i] = "" + BigDecimal.valueOf(i * 1123 / 32);
         }
-        oracle.sql.ARRAY va = (oracle.sql.ARRAY) oc.createARRAY("V_ARRAY", bargs);
+        oracle.sql.ARRAY va = (oracle.sql.ARRAY) oc.createARRAY("V_ARRAY", vargs);
         ocs.setARRAY(2, va);
 
         Timestamp[] dargs = new Timestamp[235];
@@ -88,27 +77,23 @@ public class ArrayX {
         ocs.registerOutParameter(5, OracleTypes.ARRAY, "V_ARRAY");
         ocs.registerOutParameter(6, OracleTypes.ARRAY, "D_ARRAY");
 
-        w.mark("before call");
         ocs.execute();
-        w.mark("after call");
+
         ARRAY no = ocs.getARRAY(4);
         ARRAY vo = ocs.getARRAY(5);
         ARRAY do_ = ocs.getARRAY(6);
         Object[] nx = (Object[]) no.getArray();
         Object[] vx = (Object[]) vo.getArray();
         Object[] dx = (Object[]) do_.getArray();
-
-        System.out.println(nx[nx.length - 1]);
-        System.out.println(vx[vx.length - 1]);
-        System.out.println(dx[dx.length - 1]);
-
-    }
-
-    public static void mkTypes(OracleConnection oc) throws SQLException {
-        Ddl.createType(oc, "create type N_ARRAY as table of number");
-        Ddl.createType(oc, "create type V_ARRAY as table of varchar2(32000)");
-        Ddl.createType(oc, "create type D_ARRAY as table of date");
-
+        if (nx.length != bargs.length) {
+            throw new RuntimeException("fail");
+        }
+        if (vx.length!= vargs.length) {
+            throw new RuntimeException("fail");
+        }
+        if (dx.length != dargs.length) {
+            throw new RuntimeException("fail");
+        }
     }
 
     static String ml(String... args) {
