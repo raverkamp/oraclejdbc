@@ -22,13 +22,7 @@ public class Main {
         String s = args[0];
         props = new java.util.Properties();
         props.load(new FileInputStream(s));
-
         DriverManager.registerDriver(new OracleDriver());
-
-        try (OracleConnection oc = getConnection()) {
-            WithRecords.run(oc);
-        }
-
         try (OracleConnection oc = getConnection()) {
             ComplexArrayDeluxe.run(oc);
         }
@@ -47,6 +41,14 @@ public class Main {
 
         try (OracleConnection oc = getConnection()) {
             ArrayX.run(oc);
+        }
+
+        try (OracleConnection oc = getConnection()) {
+            DbmsOutput.run(oc);
+        }
+
+        try (OracleConnection oc = getConnection()) {
+            WithRecords.run(oc);
         }
 
     }
