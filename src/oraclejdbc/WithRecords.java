@@ -10,16 +10,16 @@ import oracle.jdbc.OracleTypes;
 import oracle.sql.ARRAY;
 
 public class WithRecords {
-/* create a package with record type and a table type based on that record
-    create a procedure which has an in parameter of this type and an out parameter of this
-    type.
-    No call this procedure from java by packaging up the parameters in three array, 
-    one for each of the base type number, varchar2 and date. 
-    The procedure is called in an sql block, there we unpack the data and call the
-    procedure. The return data is packaged up inti the three arrays and returned to java.
-    Java unpacks this data into the right data structure
-    */
-    
+    /* create a package with record type and a table type based on that record
+     create a procedure which has an in parameter of this type and an out parameter of this
+     type.
+     No call this procedure from java by packaging up the parameters in three array, 
+     one for each of the base type number, varchar2 and date. 
+     The procedure is called in an sql block, there we unpack the data and call the
+     procedure. The return data is packaged up inti the three arrays and returned to java.
+     Java unpacks this data into the right data structure
+     */
+
     static class Rec {
 
         public Double n;
@@ -146,10 +146,10 @@ public class WithRecords {
             r.d = new Date(((Timestamp) dx[di]).getTime());
             raus.add(r);
         }
-        if (rein.size()!=raus.size()) {
+        if (rein.size() != raus.size()) {
             throw new RuntimeException("fail");
         }
-        for(int i=0;i<rein.size();i++){
+        for (int i = 0; i < rein.size(); i++) {
             Rec r1 = raus.get(i);
             Rec r2 = rein.get(i);
             if (!(r1.d.equals(r2.d) && r1.v.equals(r2.v) && r1.d.equals(r2.d))) {
