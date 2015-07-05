@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import oracle.jdbc.*;
 
+// the driver for all the examples
 public class Main {
 
     static OracleConnection getConnection() throws SQLException {

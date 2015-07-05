@@ -9,7 +9,6 @@ import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
 
 /*
  fetch dbmsoutput fromdatabase 

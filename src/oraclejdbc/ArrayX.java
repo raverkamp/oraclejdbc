@@ -7,16 +7,16 @@ import oracle.sql.*;
 
 public class ArrayX {
     /* create three array types, for number, string and date in oracle
-       send three arrays to oracle revert then and return them in
-       out parameters
-    */
+     send three arrays to oracle revert then and return them in
+     out parameters
+     */
 
     public static void run(OracleConnection oc) throws SQLException {
 
         Ddl.createType(oc, "create type N_ARRAY as table of number");
         Ddl.createType(oc, "create type V_ARRAY as table of varchar2(32000)");
         Ddl.createType(oc, "create type D_ARRAY as table of date");
-        
+
         String sql = ml(
                 "declare",
                 " na N_ARRAY;",
@@ -88,7 +88,7 @@ public class ArrayX {
         if (nx.length != bargs.length) {
             throw new RuntimeException("fail");
         }
-        if (vx.length!= vargs.length) {
+        if (vx.length != vargs.length) {
             throw new RuntimeException("fail");
         }
         if (dx.length != dargs.length) {

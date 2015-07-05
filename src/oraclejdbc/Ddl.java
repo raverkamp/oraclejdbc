@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OracleStatement;
 
+// a helper class to create an obejct type without body
 public class Ddl {
 
     public static void createType(OracleConnection c, String s) {
@@ -32,10 +33,10 @@ public class Ddl {
             throw new RuntimeException(ex);
         }
     }
-    
-    public static void call(OracleConnection con,String ... s) throws SQLException {
+
+    public static void call(OracleConnection con, String... s) throws SQLException {
         try (Statement stm = con.createStatement()) {
-            stm.execute(String.join("\n",s));
+            stm.execute(String.join("\n", s));
         }
     }
 }
