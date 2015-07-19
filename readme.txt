@@ -34,3 +34,12 @@ The procedure is called in an sql block, there we unpack the data and call the
 procedure. The return data is packaged up inti the three arrays and returned to java.
 ava unpacks this data into the right data structure.
 This is a lot of work.
+
+* Record, DBUtil
+Simple classes for accesing Oracle database. Support for cursor columns.
+
+* DbmsOutput
+Class for retrieving dbms_output from database
+
+* HtpOutput
+Class for retrieving htp.p (and similar calls) output from database
